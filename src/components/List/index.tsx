@@ -5,11 +5,11 @@ import Card from "../Card";
 import { Container } from "./styles";
 
 interface Props {
-  data: List;
+  data: IList;
   index: number;
 }
 
-interface List {
+interface IList {
   title: string;
   creatable: boolean;
   cards: Card[];
