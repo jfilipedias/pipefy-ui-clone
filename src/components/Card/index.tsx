@@ -1,11 +1,14 @@
-import React, { useRef } from "react";
+/* eslint-disable no-param-reassign */
+import React, { useContext, useRef } from "react";
 import { useDrag, useDrop, XYCoord } from "react-dnd";
 
+import { BoardContext } from "../Board/context";
 import { Container, Label } from "./styles";
 
 interface Props {
   data: ICard;
   index: number;
+  listIndex: number;
 }
 
 interface ICard {
@@ -17,16 +20,18 @@ interface ICard {
 
 interface DragItem {
   index: number;
+  listIndex: number;
   id: string;
   type: string;
 }
 
-const Card: React.FC<Props> = ({ data, index }: Props) => {
+const Card: React.FC<Props> = ({ data, index, listIndex }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
+  const { moveCard } = useContext(BoardContext);
 
   const [{ isDragging }, dragRef] = useDrag({
     type: "CARD",
-    item: { index },
+    item: { index, listIndex },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -36,9 +41,12 @@ const Card: React.FC<Props> = ({ data, index }: Props) => {
     accept: "CARD",
     hover: (item: DragItem, monitor) => {
       const dragIndex = item.index;
-      const hoverIndex = index;
+      const dragListIndex = item.listIndex;
 
-      if (dragIndex === hoverIndex) {
+      const hoverIndex = index;
+      const hoverListIndex = listIndex;
+
+      if (dragIndex === hoverIndex && dragListIndex === hoverListIndex) {
         return;
       }
 
@@ -54,7 +62,13 @@ const Card: React.FC<Props> = ({ data, index }: Props) => {
       const afterNextItem = dragIndex > hoverIndex && draggedTop > hoverMiddleY;
 
       if (beforeNextItem || afterNextItem) {
+        return;
       }
+
+      moveCard(dragIndex, dragListIndex, hoverIndex, hoverListIndex);
+
+      item.index = hoverIndex;
+      item.listIndex = hoverListIndex;
     },
   });
 

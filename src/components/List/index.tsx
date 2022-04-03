@@ -6,6 +6,7 @@ import { Container } from "./styles";
 
 interface Props {
   data: List;
+  index: number;
 }
 
 interface List {
@@ -22,7 +23,7 @@ interface Card {
   user?: string;
 }
 
-const List: React.FC<Props> = ({ data }: Props) => {
+const List: React.FC<Props> = ({ data, index: listIndex }: Props) => {
   return (
     <Container done={data.done}>
       <header>
@@ -36,7 +37,7 @@ const List: React.FC<Props> = ({ data }: Props) => {
 
       <ul>
         {data.cards.map((card, index) => (
-          <Card key={card.id} index={index} data={card} />
+          <Card key={card.id} index={index} data={card} listIndex={listIndex} />
         ))}
       </ul>
     </Container>
